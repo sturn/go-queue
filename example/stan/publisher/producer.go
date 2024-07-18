@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/nats-io/stan.go"
-	"github.com/zeromicro/go-queue/stanq"
+	"github.com/sturn/go-queue/stanq"
 	"math/rand"
 	"time"
 )

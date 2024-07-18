@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/zeromicro/go-queue/rabbitmq"
+	"github.com/sturn/go-queue/rabbitmq"
 )
 
 func main() {
