@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/beanstalkd/go-beanstalk v0.2.0
+	github.com/jinzhu/copier v0.4.0
 	github.com/nats-io/nats-server/v2 v2.9.15 // indirect
 	github.com/nats-io/nats-streaming-server v0.25.3 // indirect
 	github.com/nats-io/stan.go v0.10.4

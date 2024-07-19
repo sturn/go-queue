@@ -2,17 +2,13 @@ package kq
 
 import (
 	"context"
-	"crypto/tls"
-	"crypto/x509"
 	"io"
 	"log"
-	"os"
 	"time"
 
 	"github.com/segmentio/kafka-go"
 	_ "github.com/segmentio/kafka-go/gzip"
 	_ "github.com/segmentio/kafka-go/lz4"
-	"github.com/segmentio/kafka-go/sasl/plain"
 	_ "github.com/segmentio/kafka-go/snappy"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/queue"
@@ -116,30 +112,15 @@ func newKafkaQueue(c KqConf, handler ConsumeHandler, options queueOptions) queue
 		CommitInterval: options.commitInterval,
 		QueueCapacity:  options.queueCapacity,
 	}
+
 	if len(c.Username) > 0 && len(c.Password) > 0 {
 		readerConfig.Dialer = &kafka.Dialer{
-			SASLMechanism: plain.Mechanism{
-				Username: c.Username,
-				Password: c.Password,
-			},
+			SASLMechanism: saslMech(scConf(c)),
 		}
 	}
-	if len(c.CaFile) > 0 {
-		caCert, err := os.ReadFile(c.CaFile)
-		if err != nil {
-			log.Fatal(err)
-		}
 
-		caCertPool := x509.NewCertPool()
-		ok := caCertPool.AppendCertsFromPEM(caCert)
-		if !ok {
-			log.Fatal(err)
-		}
-
-		readerConfig.Dialer.TLS = &tls.Config{
-			RootCAs:            caCertPool,
-			InsecureSkipVerify: true,
-		}
+	if len(c.CaFile) > 0 || len(c.CaPEM) > 0 {
+		readerConfig.Dialer.TLS = tlsConfig(scConf(c))
 	}
 	consumer := kafka.NewReader(readerConfig)
 
